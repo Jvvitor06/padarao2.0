@@ -26,13 +26,14 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // Apenas a rota /usuarios/** exige login
-                        .requestMatchers("/usuarios/**").authenticated()
-                        // Todo o resto é público
+                        // /usuario/** exige login
+                        .requestMatchers("/usuario/**").authenticated()
+                        // qualquer outra rota é pública
                         .anyRequest().permitAll()
                 )
                 .formLogin(form -> form
-                        .loginPage("/login") // Opcional: você pode criar uma página customizada
+                        .loginPage("/login")       // página de login customizada
+                        .defaultSuccessUrl("/usuarios.html") // redireciona após login
                         .permitAll()
                 )
                 .logout(logout -> logout.permitAll());

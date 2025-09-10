@@ -18,33 +18,38 @@ import java.util.List;
 public class UsuarioController {
     private final UsuarioService usuarioService;
 
+    // Listar todos os usuários
+    @GetMapping
+    public ResponseEntity<List<Usuario>> listarUsuarios() {
+        List<Usuario> usuarios = usuarioService.listarTodos();
+        return ResponseEntity.ok(usuarios);
+    }
+
+    // Salvar novo usuário
     @PostMapping
     public ResponseEntity<Void> salvarUsuario(@RequestBody Usuario usuario) {
         usuarioService.salvarUsuario(usuario);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    // Buscar usuário por CPF
     @GetMapping("/cpf")
     public ResponseEntity<Usuario> buscarUsuarioPorCpf(@RequestParam String cpf) {
-        return ResponseEntity.ok(usuarioService.buscarPorCpf(cpf));
+        Usuario usuario = usuarioService.buscarPorCpf(cpf);
+        return ResponseEntity.ok(usuario);
     }
 
+    // Deletar usuário por CPF
     @DeleteMapping
     public ResponseEntity<Void> deletarUsuario(@RequestParam String cpf) {
         usuarioService.deletarPorCpf(cpf);
         return ResponseEntity.ok().build();
     }
 
+    // Atualizar usuário por CPF
     @PutMapping
     public ResponseEntity<Void> atualizarUsuario(@RequestParam String cpf, @RequestBody Usuario usuario) {
         usuarioService.atualizarPorCpf(cpf, usuario);
         return ResponseEntity.ok().build();
     }
-
-    @GetMapping
-    public ResponseEntity<List<Usuario>> listarUsuario() {
-        return ResponseEntity.ok(usuarioService.listarTodos());
-    }
 }
-
-

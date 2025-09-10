@@ -1,8 +1,9 @@
-const API_USUARIO = "https://zika-krry.onrender.com/usuario"; // Troque para a URL do Render depois
+const API_USUARIO = "https://zika-krry.onrender.com/usuario"; // URL do backend
 
 // CADASTRAR USUÁRIO
 document.getElementById("formUsuario").addEventListener("submit", async function (e) {
     e.preventDefault();
+
     const usuario = {
         nome: document.getElementById("nome").value,
         cpf: document.getElementById("cpf").value,
@@ -15,7 +16,8 @@ document.getElementById("formUsuario").addEventListener("submit", async function
         const response = await fetch(API_USUARIO, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(usuario)
+            body: JSON.stringify(usuario),
+            credentials: 'include' // necessário se a rota exigir login
         });
 
         if (response.status === 201 || response.status === 200) {
@@ -23,7 +25,8 @@ document.getElementById("formUsuario").addEventListener("submit", async function
             document.getElementById("formUsuario").reset();
             carregarUsuarios();
         } else {
-            alert("Erro ao cadastrar usuário.");
+            const errorText = await response.text();
+            alert("Erro ao cadastrar usuário: " + errorText);
         }
     } catch (error) {
         alert("Erro de conexão com o servidor.");
@@ -34,7 +37,7 @@ document.getElementById("formUsuario").addEventListener("submit", async function
 // LISTAR TODOS OS USUÁRIOS
 async function carregarUsuarios() {
     try {
-        const res = await fetch(API_USUARIO);
+        const res = await fetch(API_USUARIO, { credentials: 'include' });
         if (!res.ok) throw new Error(`Erro ${res.status}`);
         const usuarios = await res.json();
         const div = document.getElementById("listaUsuarios");
@@ -51,8 +54,13 @@ async function carregarUsuarios() {
 
 // DELETAR USUÁRIO
 async function deletarUsuario(cpf) {
+    if (!confirm("Tem certeza que deseja deletar este usuário?")) return;
+
     try {
-        const res = await fetch(`${API_USUARIO}?cpf=${cpf}`, { method: "DELETE" });
+        const res = await fetch(`${API_USUARIO}?cpf=${cpf}`, {
+            method: "DELETE",
+            credentials: 'include'
+        });
         if (!res.ok) throw new Error(`Erro ${res.status}`);
         carregarUsuarios();
     } catch (err) {
@@ -65,7 +73,7 @@ async function deletarUsuario(cpf) {
 async function buscarUsuario() {
     const cpf = document.getElementById("buscarCpf").value;
     try {
-        const response = await fetch(`${API_USUARIO}?cpf=${cpf}`);
+        const response = await fetch(`${API_USUARIO}?cpf=${cpf}`, { credentials: 'include' });
         if (response.ok) {
             const usuario = await response.json();
             document.getElementById("resultado").textContent = JSON.stringify(usuario, null, 2);
@@ -79,4 +87,4 @@ async function buscarUsuario() {
 }
 
 // Carrega a lista automaticamente ao abrir a página
-carregarUsuarios();
+document.addEventListener("DOMContentLoaded", carregarUsuarios);

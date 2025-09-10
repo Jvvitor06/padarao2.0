@@ -24,12 +24,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // ✅ forma nova
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
-                        .anyRequest().authenticated()
+                        // Apenas a rota /usuarios/** exige login
+                        .requestMatchers("/usuarios/**").authenticated()
+                        // Todo o resto é público
+                        .anyRequest().permitAll()
                 )
-                .formLogin(form -> form.permitAll())
+                .formLogin(form -> form
+                        .loginPage("/login") // Opcional: você pode criar uma página customizada
+                        .permitAll()
+                )
                 .logout(logout -> logout.permitAll());
 
         return http.build();
@@ -45,5 +50,3 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 }
-
-

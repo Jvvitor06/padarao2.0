@@ -32,6 +32,15 @@ public class User implements UserDetails {
     private UserRole role;
 
     // ===============================
+    // Construtor customizado para DataInitializer
+    // ===============================
+    public User(String username, String password, UserRole role) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
+
+    // ===============================
     // Implementação de UserDetails
     // ===============================
     @Override

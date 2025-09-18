@@ -8,6 +8,9 @@ WORKDIR /app
 COPY pom.xml .
 COPY src ./src
 
+# Baixa dependências offline (opcional, mas acelera builds futuros)
+RUN mvn dependency:go-offline
+
 # Build do projeto sem executar testes
 RUN mvn clean package -DskipTests
 
@@ -18,18 +21,16 @@ FROM eclipse-temurin:17-jdk
 WORKDIR /app
 
 # Copia o JAR gerado na etapa anterior
-COPY --from=builder /app/target/*.jar app.jar
+# Substitua pelo nome exato do seu JAR gerado pelo Maven
+COPY --from=builder /app/target/seu-app-0.0.1-SNAPSHOT.jar app.jar
 
-# Define a porta que o Render vai expor
+# Define porta padrão e expõe
 ENV PORT=8080
 EXPOSE 8080
 
-# Variável para Spring Boot usar a porta dinâmica do Render
-ENV SERVER_PORT=${PORT}
-
-# Habilita UTF-8 e perfil padrão
+# Habilita UTF-8 e define perfil padrão
 ENV LANG=C.UTF-8
 ENV SPRING_PROFILES_ACTIVE=default
 
-# Comando para iniciar o app
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Comando para iniciar o app garantindo que Spring Boot use a porta do Render
+ENTRYPOINT ["sh", "-c", "java -jar app.jar --server.port=${PORT}"]

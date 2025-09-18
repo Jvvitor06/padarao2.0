@@ -8,7 +8,7 @@ WORKDIR /app
 COPY pom.xml .
 COPY src ./src
 
-# Baixa dependências offline (opcional, mas acelera builds futuros)
+# Baixa dependências offline (opcional)
 RUN mvn dependency:go-offline
 
 # Build do projeto sem executar testes
@@ -20,9 +20,8 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:17-jdk
 WORKDIR /app
 
-# Copia o JAR gerado na etapa anterior
-# Substitua pelo nome exato do seu JAR gerado pelo Maven
-COPY --from=builder /app/target/seu-app-0.0.1-SNAPSHOT.jar app.jar
+# Copia o JAR gerado na etapa anterior (usa wildcard para não depender do nome exato)
+COPY --from=builder /app/target/*.jar app.jar
 
 # Define porta padrão e expõe
 ENV PORT=8080

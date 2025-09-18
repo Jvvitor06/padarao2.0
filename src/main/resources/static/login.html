@@ -2,22 +2,18 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Login - Padaria</title>
-    <style>
-        body { font-family: Arial; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .container { padding: 20px; border: 1px solid #ccc; border-radius: 10px; }
-        input { display: block; margin: 10px 0; padding: 8px; width: 200px; }
-        button { padding: 8px 15px; }
-    </style>
+    <title>Login</title>
 </head>
 <body>
-<div class="container">
-    <h2>Login</h2>
-    <form method="post" action="/login">
-        <input type="text" name="username" placeholder="Usuário" required>
-        <input type="password" name="password" placeholder="Senha" required>
-        <button type="submit">Entrar</button>
-    </form>
-</div>
+<h1>Login</h1>
+<form action="/login" method="post">
+    <label for="username">Usuário:</label>
+    <input type="text" name="username" id="username" required>
+    <br>
+    <label for="password">Senha:</label>
+    <input type="password" name="password" id="password" required>
+    <br>
+    <button type="submit">Entrar</button>
+</form>
 </body>
 </html>

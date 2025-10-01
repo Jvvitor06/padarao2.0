@@ -1,7 +1,7 @@
 package com.example.padaria_paotorrado.infrastructure.repository;
 
 import com.example.padaria_paotorrado.infrastructure.entitys.Cadastro;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface CadastroRepositorio extends JpaRepository<Cadastro,Long> {
+public interface CadastroRepositorio extends MongoRepository<Cadastro, String> {
 }

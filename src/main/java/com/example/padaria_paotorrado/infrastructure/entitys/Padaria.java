@@ -1,24 +1,21 @@
 package com.example.padaria_paotorrado.infrastructure.entitys;
 
-import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Entity
-@Table
+@Document(collection = "padarias") // nome da coleção no Mongo
 public class Padaria {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private String id; // em Mongo o ID normalmente é String (ObjectId)
 
-    @Column(name = "nome")
     private String nome;
 
-    @Column(name = "preco")
     private Double preco;
 }

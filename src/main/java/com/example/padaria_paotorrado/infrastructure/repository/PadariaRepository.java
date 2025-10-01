@@ -1,13 +1,13 @@
 package com.example.padaria_paotorrado.infrastructure.repository;
 
 import com.example.padaria_paotorrado.infrastructure.entitys.Padaria;
-import jakarta.transaction.Transactional;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;
 
-public interface PadariaRepository extends JpaRepository<Padaria, Long > {
-    Optional<Padaria> findById(Long id);
-    @Transactional
-    void deleteById(Long id);
+public interface PadariaRepository extends MongoRepository<Padaria, String> {
+
+    Optional<Padaria> findById(String id);
+
+    void deleteById(String id);
 }

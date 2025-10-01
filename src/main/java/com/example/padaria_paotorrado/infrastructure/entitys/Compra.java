@@ -1,35 +1,31 @@
 package com.example.padaria_paotorrado.infrastructure.entitys;
 
-import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
 @Setter
-@Table(name = "tb_compra")
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 @Builder
+@Document(collection = "compras") // equivalente a @Table no JPA
 public class Compra {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-    @ManyToOne
-    @JoinColumn(name = "usuario_id")
-    private Usuario usuario;
-    @ManyToMany
-    @JoinTable(
-            name = "tb_compra_produto",
-            joinColumns = @JoinColumn(name = "compra_id"),
-            inverseJoinColumns = @JoinColumn(name = "padaria_id")
-    )
-    private List<Padaria> produtos;
-    @Column(name = "data_compra")
-    private LocalDateTime dataCompra;
-    @Column(name = "valor_total")
-    private Double valorTotal;
 
+    @Id
+    private String id; // Mongo usa String (ObjectId), não Long
+
+    @DBRef
+    private Usuario usuario; // referência a outro documento
+
+    @DBRef
+    private List<Padaria> produtos; // lista de produtos
+
+    private LocalDateTime dataCompra;
+
+    private Double valorTotal;
 }

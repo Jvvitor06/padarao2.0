@@ -1,8 +1,11 @@
-const API_USUARIO = "https://zika-krry.onrender.com/usuario"; // URL do backend
+const API_USUARIO = "https://zika-krry.onrender.com/usuario";
 
-// CADASTRAR USUÁRIO
+// ----------------- CADASTRAR -----------------
 document.getElementById("formUsuario").addEventListener("submit", async function (e) {
     e.preventDefault();
+
+    const auth = await pedirCredenciais();
+    if (!auth) return alert("Cadastro cancelado.");
 
     const usuario = {
         nome: document.getElementById("nome").value,
@@ -15,76 +18,80 @@ document.getElementById("formUsuario").addEventListener("submit", async function
     try {
         const response = await fetch(API_USUARIO, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(usuario),
-            credentials: 'include' // necessário se a rota exigir login
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Basic " + auth
+            },
+            body: JSON.stringify(usuario)
         });
 
-        if (response.status === 201 || response.status === 200) {
+        if (response.ok) {
             alert("Usuário cadastrado com sucesso!");
             document.getElementById("formUsuario").reset();
             carregarUsuarios();
+        } else if (response.status === 401) {
+            alert("Usuário ou senha inválidos.");
         } else {
             const errorText = await response.text();
-            alert("Erro ao cadastrar usuário: " + errorText);
+            alert("Erro: " + errorText);
         }
-    } catch (error) {
-        alert("Erro de conexão com o servidor.");
-        console.error(error);
+    } catch (err) {
+        console.error(err);
+        alert("Erro de conexão.");
     }
 });
 
-// LISTAR TODOS OS USUÁRIOS
+// ----------------- LISTAR (público) -----------------
 async function carregarUsuarios() {
     try {
-        const res = await fetch(API_USUARIO, { credentials: 'include' });
+        const res = await fetch(API_USUARIO); // sem auth
         if (!res.ok) throw new Error(`Erro ${res.status}`);
         const usuarios = await res.json();
+
         const div = document.getElementById("listaUsuarios");
         div.innerHTML = usuarios.map(u =>
             `<p>${u.nome} - ${u.cpf} 
                 <button onclick="deletarUsuario('${u.cpf}')">Excluir</button>
             </p>`
         ).join("");
+
     } catch (err) {
         console.error(err);
         alert("Falha ao carregar usuários");
     }
 }
 
-// DELETAR USUÁRIO
+// ----------------- DELETAR -----------------
 async function deletarUsuario(cpf) {
     if (!confirm("Tem certeza que deseja deletar este usuário?")) return;
+
+    const auth = await pedirCredenciais();
+    if (!auth) return alert("Ação cancelada.");
 
     try {
         const res = await fetch(`${API_USUARIO}?cpf=${cpf}`, {
             method: "DELETE",
-            credentials: 'include'
+            headers: {
+                "Authorization": "Basic " + auth
+            }
         });
+
         if (!res.ok) throw new Error(`Erro ${res.status}`);
-        carregarUsuarios();
+        carregarUsuarios(); // atualiza lista
     } catch (err) {
         console.error(err);
         alert("Falha ao deletar usuário");
     }
 }
 
-// BUSCAR USUÁRIO POR CPF
-async function buscarUsuario() {
-    const cpf = document.getElementById("buscarCpf").value;
-    try {
-        const response = await fetch(`${API_USUARIO}?cpf=${cpf}`, { credentials: 'include' });
-        if (response.ok) {
-            const usuario = await response.json();
-            document.getElementById("resultado").textContent = JSON.stringify(usuario, null, 2);
-        } else {
-            document.getElementById("resultado").textContent = "Usuário não encontrado.";
-        }
-    } catch (error) {
-        document.getElementById("resultado").textContent = "Erro ao buscar usuário.";
-        console.error(error);
-    }
+// ----------------- FUNÇÃO PEDIR CREDENCIAIS -----------------
+async function pedirCredenciais() {
+    const username = prompt("Digite seu usuário admin:");
+    if (!username) return null;
+    const password = prompt("Digite sua senha:");
+    if (!password) return null;
+    return btoa(username + ":" + password);
 }
 
-// Carrega a lista automaticamente ao abrir a página
+// ----------------- AUTOLOAD -----------------
 document.addEventListener("DOMContentLoaded", carregarUsuarios);

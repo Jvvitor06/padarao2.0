@@ -13,7 +13,7 @@ public class UsuarioService {
         this.repository = repository;
     }
     public void salvarUsuario(Usuario usuario) {
-        repository.saveAndFlush(usuario);
+        repository.save(usuario);
     }
     public Usuario buscarPorCpf(String cpf) {
         return repository.findByCpf(cpf)
@@ -37,7 +37,7 @@ public class UsuarioService {
         if (usuario.getDataNascimento()!=null){
             usuarioEntity.setDataNascimento(usuario.getDataNascimento());
         }
-        repository.saveAndFlush(usuarioEntity);
+        repository.save(usuarioEntity);
 
     }
     public List<Usuario> listarTodos() {

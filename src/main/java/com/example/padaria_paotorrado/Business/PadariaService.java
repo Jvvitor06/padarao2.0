@@ -19,18 +19,18 @@ public class PadariaService {
         repositorio.save(padaria);
     }
 
-    public Padaria buscarPorId(Long id) {
+    public Padaria buscarPorId(String id) {
         return repositorio.findById(id)
                 .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
     }
 
-    public void deletarProduto(Long id) {
+    public void deletarProduto(String id) {
         Padaria existente = repositorio.findById(id)
                 .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
         repositorio.deleteById(id);
     }
 
-    public void atualizarProduto(Long id, Padaria padaria) {
+    public void atualizarProduto(String id, Padaria padaria) {
         Padaria existente = repositorio.findById(id)
                 .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
 
